@@ -1,6 +1,6 @@
 services:
   wyoming-stt-onnxasr:
-    image: firefly27/wyoming-stt-onnxasr:latest
+    image: firefly27/wyoming_stt_onnxasr:latest
     container_name: wyoming-stt-onnxasr
     restart: unless-stopped
     ports:
