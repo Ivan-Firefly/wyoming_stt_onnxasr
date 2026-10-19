@@ -2,27 +2,6 @@
 #### Нацелен на русскоговорящую аудиторию (из многообразия моделей рекомендую `gigaam-v3`)
 For English-speaking users, the Parakeet models (e.g., `nemo-parakeet-tdt-0.6b-v2`) are recommended, `canary-1b-v2` is slightly higher quality, but 4 times slower.
 
-```
-# В простом случае достаточно установить зависимости, скачать каталог с сервером и запустить его
-# Детали смотрите в репозитории OnnxAsr
-pip install onnx-asr[cpu,hub] wyoming
-
-# Пример для win с кастомным портом и облегченной версией модели (int8)
-python -m wyoming_onnxasr --model gigaam-v3-ctc --uri 'tcp://0.0.0.0:10305' --quantization int8
-
-# Если установлен onnxruntime-gpu, то используйте --device cuda
-pip install onnxruntime-gpu
-```
-В linux, как водится, все операции выполняйте в виртуальной среде вручную. Или воспользуйтесь скриптами:
-```
-git clone https://github.com/mitrokun/wyoming_stt_onnxasr.git
-cd wyoming_stt_onnxasr
-script/setup
-# script/run запустит сервер с параметрами из примера выше, но с полной моделью, используйте ключи для конфигурации
-# можно доустановить библиотеку для cuda
-~/wyoming_stt_onnxasr/.venv/bin/pip install onnxruntime-gpu
-```
-
 ### Доступные модели:
 ```
 gigaam-v2-ctc
@@ -48,6 +27,3 @@ onnx-community/whisper-small
 onnx-community/whisper-large-v3-turbo
 ```
 `parakeet-v3` и `canary-1b-v2` поддерживают следующие языки: `"bg", "hr", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "hu", "it", "lv", "lt", "mt", "pl", "pt", "ro", "sk", "sl", "es", "sv", "ru", "uk"`
-
-### Aддон для HA (только cpu):
-[![Open your Home Assistant instance and show the add-on store for this repository.](https://my.home-assistant.io/badges/supervisor_addon.svg)](https://my.home-assistant.io/redirect/supervisor_addon/?addon=f4ba1342_onnxasr&repository_url=https%3A%2F%2Fgithub.com%2Fmitrokun%2Fvoice-addons)
