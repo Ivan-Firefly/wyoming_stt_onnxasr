@@ -5,32 +5,22 @@ services:
     restart: unless-stopped
     ports:
       - "10305:10305"
-    environment:
-      # Select the model using its directory path only.
-      # The path relative to /models is also used as the onnx-asr model ID.
-      # Example: /models/gigaam-v3-ctc
-      MODEL_PATH: /models/gigaam-v3-ctc
+   environment:
+      # Model architecture/name understood by onnx-asr.
+      MODEL_NAME: alphacep/vosk-model-small-streaming-ru
+      # Container path; ./models is mounted below at /models.
+      MODEL_DIR: /models/alphacep/vosk-model-small-streaming-ru
       # Use int8 on Raspberry Pi 4 as a starting point. Set to "" to omit this option.
-      QUANTIZATION: int8
+      QUANTIZATION: ""
     volumes:
-      # Writable: onnx-asr may download/cache model files here on first start.
+      # Writable so onnx-asr can download/cache model files here on first start.
       - ./models:/models
     command:
       - /bin/sh
       - -c
       - |
-        set -eu
-        case "$$MODEL_PATH" in
-          /models/*) MODEL_NAME="$${MODEL_PATH#/models/}" ;;
-          *) echo "ERROR: MODEL_PATH must be inside /models (mounted from ./models)" >&2; exit 2 ;;
-        esac
-        if [ -z "$$MODEL_NAME" ]; then
-          echo "ERROR: MODEL_PATH must point to a model directory under /models" >&2
-          exit 2
-        fi
-        mkdir -p "$$MODEL_PATH"
-        set -- --model "$$MODEL_NAME" --model-dir "$$MODEL_PATH" --uri tcp://0.0.0.0:10305
-        if [ -n "$${QUANTIZATION:-}" ]; then
+        set -- --model "$$MODEL_NAME" --model-dir "$$MODEL_DIR" --uri tcp://0.0.0.0:10305
+        if [ -n "$$QUANTIZATION" ]; then
           set -- "$$@" --quantization "$$QUANTIZATION"
         fi
         exec python -m wyoming_onnxasr "$$@"
